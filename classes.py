@@ -46,10 +46,10 @@ class Jogador(pygame.sprite.Sprite):
 			case 'nave':
 				if self.mult_gravidade > 0:
 					self.vel.y -= 2 if self.vel.y > -10 else 0
-					self.angulo += 6 if self.angulo <= 45 else 0
+					#self.angulo += 6 if self.angulo <= 45 else 0
 				elif self.mult_gravidade < 0:
 					self.vel.y += 2 if self.vel.y < 10 else 0
-					self.angulo -= 6 if self.angulo >= -45 else 0
+					#self.angulo -= 6 if self.angulo >= -45 else 0
 			case 'bola':
 				if self.pule:
 					self.rect.y -= self.mult_gravidade * GRAVIDADE
@@ -158,6 +158,8 @@ class Jogador(pygame.sprite.Sprite):
 			self.morreu = True
 		
 		self.angulo += self.vel_rotacao
+		if self.modo_jogo == 'nave':
+			self.angulo = -self.vel.y * 2
 		self.image = pygame.transform.rotate(self.img_original, self.angulo)
 		self.rect = self.image.get_rect(center=self.rect.center)
 		ret_img = self.img_original.get_rect()
