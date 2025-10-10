@@ -46,10 +46,10 @@ class Jogador(pygame.sprite.Sprite):
 			case 'nave':
 				if self.mult_gravidade > 0:
 					self.vel.y -= 2 if self.vel.y > -10 else 0
-					self.angulo += 8 if self.angulo <= 45 else 0
+					self.angulo += 6 if self.angulo <= 45 else 0
 				elif self.mult_gravidade < 0:
 					self.vel.y += 2 if self.vel.y < 10 else 0
-					self.angulo -= 8 if self.angulo >= -45 else 0
+					self.angulo -= 6 if self.angulo >= -45 else 0
 			case 'bola':
 				if self.pule:
 					self.rect.y -= self.mult_gravidade * GRAVIDADE
@@ -134,9 +134,9 @@ class Jogador(pygame.sprite.Sprite):
 			self.vel_rotacao = 0
 		elif self.modo_jogo == 'nave':
 			if self.mult_gravidade > 0:
-				self.vel_rotacao = -4 if self.angulo >= -45 else 0
+				self.vel_rotacao = -3 if self.angulo >= -45 else 0
 			elif self.mult_gravidade < 0:
-				self.vel_rotacao = 4 if self.angulo <= 45 else 0
+				self.vel_rotacao = 3 if self.angulo <= 45 else 0
 		
 		colisores = [
 			sprite for sprite in kwargs['colisores']
@@ -178,9 +178,6 @@ class Jogador(pygame.sprite.Sprite):
 				self.mult_gravidade = 0.5 * self.mult_gravidade / abs(
 					self.mult_gravidade
 				)
-				
-				#if self.angulo < -45 or self.angulo > 45:
-#					self.angulo = 45 * self.mult_gravidade
 				
 			case 'bola':
 				self.mult_gravidade = 0.5 * self.mult_gravidade / abs(
