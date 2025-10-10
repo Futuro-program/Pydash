@@ -160,6 +160,7 @@ class Jogador(pygame.sprite.Sprite):
 		self.angulo += self.vel_rotacao
 		self.image = pygame.transform.rotate(self.img_original, self.angulo)
 		self.rect = self.image.get_rect(center=self.rect.center)
+		ret_img = self.img_original.get_rect()
 		
 		match self.modo_jogo:
 			case 'quadrado':
@@ -169,15 +170,38 @@ class Jogador(pygame.sprite.Sprite):
 				
 				self.img_original = pygame.Surface((65, 65), pygame.SRCALPHA)
 				pygame.draw.rect(
-					self.img_original, (100, 255, 0), ((0, 0), self.rect.size)
+					self.img_original, (100, 255, 0), ((0, 0), ret_img.size)
 				)
 				pygame.draw.rect(
-					self.img_original, 'black', ((0, 0), self.rect.size), 2
+					self.img_original, 'black', ((0, 0), ret_img.size), 2
 				)
 			case 'nave':
 				self.mult_gravidade = 0.5 * self.mult_gravidade / abs(
 					self.mult_gravidade
 				)
+				
+				self.img_original = pygame.Surface((65, 65), pygame.SRCALPHA)
+				ret_nave = pygame.Rect(
+					(0, 0), (ret_img.width * 0.6, ret_img.height * 0.8)
+				)
+				ret_nave.center = ret_img.center
+				
+				pygame.draw.rect(self.img_original, (100, 255, 0), ret_nave)
+				pygame.draw.polygon(self.img_original, (100, 255, 0), [
+					ret_nave.topright, (ret_img.right, ret_nave.centery - 15), 
+					(ret_img.right, ret_nave.centery + 15), ret_nave.bottomright
+				])
+				pygame.draw.polygon(self.img_original, (100, 255, 0), [
+					ret_nave.topleft, (ret_img.left, ret_nave.top - 15), 
+					(ret_img.left, ret_nave.bottom + 15), ret_nave.bottomleft
+				])
+				
+				pygame.draw.polygon(self.img_original, 'black', [
+					(ret_img.left, ret_nave.top - 15), ret_nave.topleft,
+					ret_nave.topright, (ret_img.right, ret_nave.centery - 15), 
+					(ret_img.right, ret_nave.centery + 15), ret_nave.bottomright,
+					ret_nave.bottomleft, (ret_img.left, ret_nave.bottom + 15)
+				], 2)
 				
 			case 'bola':
 				self.mult_gravidade = 0.5 * self.mult_gravidade / abs(
@@ -187,11 +211,11 @@ class Jogador(pygame.sprite.Sprite):
 				self.img_original = pygame.Surface((65, 65), pygame.SRCALPHA)
 				pygame.draw.circle(
 					self.img_original, (100, 255, 0),
-					self.img_original.get_rect().center, 32.5
+					ret_img.center, 32.5
 				)
 				pygame.draw.circle(
 					self.img_original, 'black', 
-					self.img_original.get_rect().center, 32.5, 2
+					ret_img.center, 32.5, 2
 				)
 			case _:
 				raise Exception('Modo de jogo inválido!')
