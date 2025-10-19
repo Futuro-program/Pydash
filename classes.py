@@ -37,7 +37,7 @@ class Jogador(pygame.sprite.Sprite):
 		self.vel_rotacao = -8
 	
 	def pular(self):
-		"""--> Verifica se o jogador pode pular; se sim, aplica uma velocidade para cima nele."""
+		"""--> Faz o jogador realizar a ação de pular, voar ou mudar a gravidade."""
 		
 		match self.modo_jogo:
 			case 'quadrado':
@@ -78,47 +78,32 @@ class Jogador(pygame.sprite.Sprite):
 		if (self.rect.top, self.rect.bottom) == (outro.rect.top, outro.rect.bottom):
 			self.morreu = True
 			return
-		
-		if pygame.Rect(
-				(outro.rect.left, outro.rect.top), 
-				(outro.rect.width, outro.rect.height * 0.4)
-			).collidepoint(self.rect.bottomright):
-			if self.modo_jogo != 'quadrado' or self.mult_gravidade > 0:
-				self.vel.y = 0
-				if self.modo_jogo != 'bola':
-					self.vel_rotacao = 0
-					if self.modo_jogo == 'quadrado':
-						self.angulo = self.angulo // 90 * 90
-					else:
-						self.angulo = 0
+			
+		if self.rect.top < outro.rect.top and self.rect.bottom in range(
+			outro.rect.top + 1, outro.rect.bottom
+		) or self.rect.bottom > outro.rect.bottom and self.rect.top in range(
+			outro.rect.top + 1, outro.rect.bottom
+		):
+			if self.rect.bottom + self.vel.y >= outro.rect.top and self.rect.bottom < outro.rect.bottom:
+				if self.mult_gravidade < 0 and self.modo_jogo == 'quadrado':
+					self.morreu = True
+					return
+					
 				self.rect.bottom = outro.rect.top
-				self.pule = True
-				return
-			self.morreu = True
-		
-		elif pygame.Rect(
-				(outro.rect.left, outro.rect.top + outro.rect.height * 0.6),
-				(outro.rect.width, outro.rect.height * 0.4)
-			).collidepoint(self.rect.topright):
-			if self.modo_jogo != 'quadrado' or self.mult_gravidade < 0:
-				self.vel.y = 0
-				if self.modo_jogo != 'bola':
-					self.vel_rotacao = 0
-					if self.modo_jogo == 'quadrado':
-						self.angulo = self.angulo // 90 * 90
-					else:
-						self.angulo = 0
+					
+			elif self.rect.top + self.vel.y <= outro.rect.bottom and self.rect.top > outro.rect.top:
+				if self.mult_gravidade > 0 and self.modo_jogo == 'quadrado':
+					self.morreu = True
+					return
+					
 				self.rect.top = outro.rect.bottom
-				self.pule = True
-				return
-			self.morreu = True
+			
+			self.vel.y = 0
+			self.angulo //= 90; self.angulo *= 90
+			self.vel_rotacao = 0
+			self.pule = True
+			return
 		
-		elif pygame.Rect(
-			(outro.rect.left, outro.rect.top + outro.rect.height * 0.4), 
-			(outro.rect.width, outro.rect.height * 0.2)
-		).colliderect(self.rect):
-			self.morreu = True
-	
 	def update(self, **kwargs):
 		"""Veja pygame.sprite.Sprite.update e pygame.sprite.Group.update."""
 		
@@ -158,8 +143,10 @@ class Jogador(pygame.sprite.Sprite):
 			self.morreu = True
 		
 		self.angulo += self.vel_rotacao
+		
 		if self.modo_jogo == 'nave':
 			self.angulo = -self.vel.y * 2
+		
 		self.image = pygame.transform.rotate(self.img_original, self.angulo)
 		self.rect = self.image.get_rect(center=self.rect.center)
 		ret_img = self.img_original.get_rect()

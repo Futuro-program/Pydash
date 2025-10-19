@@ -7,7 +7,9 @@ pygame.init()
 
 LARGURA = objs_jogo.LARGURA
 ALTURA = objs_jogo.ALTURA
-tela = pygame.display.set_mode((LARGURA, ALTURA), pygame.SRCALPHA)
+tela = pygame.display.set_mode(
+	(LARGURA, ALTURA), pygame.FULLSCREEN | pygame.DOUBLEBUF
+)
 pygame.display.set_caption('Pydash')
 
 grupo_desenho = pygame.sprite.Group()
@@ -47,10 +49,10 @@ while rodando:
 							rodando_nivel = False
 					
 					nivel_selecionado = niveis.selecao_niveis(num_nivel)
-					if nivel_selecionado(
-							tela, desenho=grupo_desenho,
-						 	colisores=grupo_colisores, particulas=grupo_particulas
-						):
+					if nivel_selecionado.rodar(
+						tela, desenho=grupo_desenho, 
+						colisores=grupo_colisores, particulas=grupo_particulas
+					):
 						rodando_nivel = False
 			
 			elif botao_anterior.collidepoint(evento.pos):
@@ -69,7 +71,7 @@ while rodando:
 	tela.fill(cor_fundo)
 	
 	indicador_nivel = fonte_titulo.render(
-		f'Nível {num_nivel}', True, 
+		f'{niveis.selecao_niveis(num_nivel).nome}', True, 
 		(255 - cor_fundo[0], 255 - cor_fundo[1], 255 - cor_fundo[2])
 	)
 	ret_indicador_nivel = indicador_nivel.get_rect()
